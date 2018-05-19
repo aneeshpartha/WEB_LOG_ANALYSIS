@@ -1,0 +1,61 @@
+load data local infile '/vagrant/weblogs/2016/2016' into table weblog columns terminated by ' ' lines terminated by '\n';
+
+load data local infile '/vagrant/weblogs/20152014/20152014' into table weblogsmall columns terminated by ' ' lines terminated by '\n';
+
+load data local infile '/vagrant/weblogs/20152014/test' into table test columns terminated by ' ' lines terminated by '\n';
+
+mysql -u root -p --local-infile
+
+
+mysql> create table test( date varchar(50), time varchar(50), s_ip varchar(50),cs_method varchar(50), cs_uri_stem varchar(50), cs_uri_query varchar(50), s_port int, cs_username varchar(50), c_ip varchar(50), cs_user_agent varchar(50), sc_status varchar(50), sc_substatus varchar(50), sc_win32_status varchar(50), time_taken varchar(50) );
+
+
+
+select YEAR(date),MONTH(date),max(cs_uri_stem) from weblog_small where sc_status=200 and cs_uri_stem not like '%index%' group by YEAR(date),MONTH(Date);
+
+
+select date,max(cs_uri_stem) from weblog where sc_status=200 and cs_uri_stem not like '%index%' group by date;
+
+
+
+records = LOAD '/vagrant/weblogs/2016/2016' AS
+(date:chararray, time:chararray, s_ip:chararray,cs_method:chararray, cs_uri_stem:chararray, cs_uri_query:chararray, s_port:int, cs_username:chararray, c_ip:chararray, cs_user_agent:chararray, sc_status:chararray, sc_substatus:chararray, sc_win32_status:chararray, time_taken:chararray)
+
+
+filtered_records1= FILTER records BY  sc_status == '200';
+
+
+Pig latin:
+
+records = LOAD '/user/vagrant/input/test' USING PigStorage(' ') AS (date:chararray, time:chararray, s_ip:chararray,cs_method:chararray, cs_uri_stem:chararray, cs_uri_query:chararray, s_port:int, cs_username:chararray, c_ip:chararray, cs_user_agent:chararray, sc_status:chararray, time_taken:chararray);filtered_records = FILTER records BY date != '*#*';
+filtered_records1= FILTER records BY cs_uri_stem != '/' AND cs_uri_stem != '*index.*' AND sc_status == '200';
+filtered_records2= GROUP filtered_records1 BY  (cs_uri_stem,date);
+//filtered_records3= GROUP filtered_records1 BY  filtered_records1.date;
+//groupedURL = GROUP uniqURL ALL;
+SELECTVALUE = FOREACH filtered_records2 GENERATE group , COUNT(filtered_records1.cs_uri_stem) as counts;
+counts_new = ORDER SELECTVALUE BY counts DESC;
+
+//data =  foreach  filtered_records4 generate $0 , MAX(counts_new.counts);
+
+
+joining = JOIN counts_new BY counts , data BY maxi;
+final = foreach joining generate $0 , $1;
+
+//data =  foreach  filtered_records4 generate  MAX(counts_new.counts) as maxi;
+data =  foreach  filtered_records4 generate counts_new::group.date   , counts_new::group.cs_uri_stem , MAX(counts_new.counts);
+data_new = ORDER data BY datenew;
+
+to_tuple = foreach group generate TOTUPLE(counts_new.dates , counts_new.URL , MAX(counts_new.counts));
+
+filtered_records6 = FOREACH group GENERATE MAX(counts_new.counts) as max;
+filtered_records4 = GROUP counts_new BY group.date;
+filtered_records5 = ORDER filtered_records4 BY dates;
+
+filtered_records4 = GROUP SELECTVALUE BY dates;
+data =  foreach  filtered_records4 generate FLATTEN(SELECTVALUE.dates) AS datenew  , FLATTEN(SELECTVALUE.URL) AS URL  , MAX(SELECTVALUE.counts);
+
+
+temp = foreach ( GROUP counts_new BY group.date) generate group.date , group.cs_uri_steam , MAX(counts_new.counts)
+
+
+

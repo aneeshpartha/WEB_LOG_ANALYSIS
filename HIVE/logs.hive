@@ -1,0 +1,34 @@
+#Table creation
+
+create table weblogsmall( dates varchar(50), time varchar(50), s_ip varchar(50),cs_method varchar(50), cs_uri_stem varchar(50),
+cs_uri_query varchar(50), s_port int, cs_username varchar(50), c_ip varchar(50), cs_user_agent varchar(50), sc_status varchar(50),
+sc_substatus varchar(50), sc_win32_status varchar(50), time_taken varchar(50) )
+ROW FORMAT DELIMITED  FIELDS TERMINATED BY ' ';
+
+
+
+create table weblog( dates varchar(50), time varchar(50), s_ip varchar(50),cs_method varchar(50), cs_uri_stem varchar(50),
+cs_uri_query varchar(50), s_port int, cs_username varchar(50), c_ip varchar(50), cs_user_agent varchar(50), sc_status varchar(50),
+sc_substatus varchar(50), sc_win32_status varchar(50), time_taken varchar(50) )
+ROW FORMAT DELIMITED  FIELDS TERMINATED BY ' ';
+
+#Loading data
+
+load data local INPATH '/vagrant/weblogs/20152014/20152014' overwrite into table weblog;
+
+load data local INPATH '/vagrant/weblogs/2016/2016' overwrite into table weblog;
+
+
+#Date
+
+select dates, cs_uri_stem , max(counts) from ( select dates, cs_uri_stem , count(cs_uri_stem) as counts from weblogsmall where
+cs_uri_stem NOT LIKE '/' and cs_uri_stem NOT LIKE '%index%' and sc_status like '200' group by cs_uri_stem , dates ) as webs
+group by dates , distinct(cs_uri_stem) order by dates;
+
+#Month
+
+select month,cs_uri_stem,max(counts) from ( select SUBSTRING(dates,1,7) , cs_uri_stem , count(cs_uri_stem) as counts , count(cs_uri_st
+em) from weblogsmall where
+cs_uri_stem NOT LIKE '/' and cs_uri_stem NOT LIKE '%index%' and sc_status like '200' group by cs_uri_stem , SUBSTRING(dates,1,7)) as w
+ebsmonth
+group by month order by month;

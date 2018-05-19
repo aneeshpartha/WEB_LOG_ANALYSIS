@@ -1,0 +1,18 @@
+--2017-04-29 23:09:43--  http://final/
+Resolving final (final)... failed: No address associated with hostname.
+wget: unable to resolve host address ‘final’
+--2017-04-29 23:09:43--  http://=/
+Resolving = (=)... failed: Name or service not known.
+wget: unable to resolve host address ‘=’
+--2017-04-29 23:09:43--  http://foreach/
+Resolving foreach (foreach)... failed: Name or service not known.
+wget: unable to resolve host address ‘foreach’
+--2017-04-29 23:09:43--  http://joining/
+Resolving joining (joining)... failed: Name or service not known.
+wget: unable to resolve host address ‘joining’
+--2017-04-29 23:09:43--  http://generate/
+Resolving generate (generate)... failed: Name or service not known.
+wget: unable to resolve host address ‘generate’
+--2017-04-29 23:09:43--  http://,/
+Resolving , (,)... failed: Name or service not known.
+wget: unable to resolve host address ‘,’
